@@ -1,0 +1,1 @@
+https://murygin.wordpress.com/2014/10/13/rest-web-service-file-uploads-spring-boot/

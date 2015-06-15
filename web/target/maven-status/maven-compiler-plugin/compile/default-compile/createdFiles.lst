@@ -1,0 +1,4 @@
+com/bubanking/web/configuration/MvcConfiguration.class
+com/bubanking/web/configuration/WebSecurityConfiguration.class
+com/bubanking/web/WebApplication.class
+com/bubanking/web/controller/AdminController.class

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/jms
+		http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd">
+
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.bubanking"/>
+	
+	<beans:bean id="connectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<beans:property name="targetConnectionFactory">
+			<beans:bean class="org.apache.activemq.ActiveMQConnectionFactory">
+				<beans:property name="brokerURL" value="tcp://localhost:61616" />
+				<beans:property name="userName" value="admin" />
+				<beans:property name="password" value="admin" />
+			</beans:bean>
+		</beans:property>
+		<beans:property name="sessionCacheSize" value="10" />
+		<beans:property name="cacheProducers" value="false" />
+	</beans:bean>
+
+<!-- 	<beans:bean id="helloJmsServiceActivator"
+		class="com.bubanking.integration.endpoint.HelloJsmServiceActivator" />
+		 -->
+		
+
+	<!-- toJms channel -->
+	<channel id="inboundJmsChannel"/>
+
+
+	<jms:message-driven-channel-adapter
+		channel="inboundJmsChannel" extract-payload="true" connection-factory="connectionFactory"
+		destination-name="solution1" concurrent-consumers="1" message-converter="" >
+		
+		
+		</jms:message-driven-channel-adapter>
+
+
+	<service-activator input-channel="inboundJmsChannel" ref="helloJmsServiceActivator" output-channel="outboundJmsChannel"/>
+	<channel id="outboundJmsChannel"/>
+	
+	<service-activator input-channel="outboundJmsChannel" ref="testOutBoundChannelActivator">
+		<poller >
+			
+		</poller>
+	
+	</service-activator>
+	
+	<jms:outbound-channel-adapter channel="outboundJmsChannel" connection-factory="connectionFactory"
+		destination-name="store1" extract-payload="true"
+	/>
+	
+
+
+
+</beans:beans>
